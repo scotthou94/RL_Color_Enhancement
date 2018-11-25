@@ -21,10 +21,10 @@ def get_histogram(img):
     for i in range(3):
         histogram.append(cv2.calcHist([equalized_img], [i], None, [32], [0,256]))   # 32 bins
     return histogram
-
+''' # test client
 if __name__ == '__main__':
     img_path = sys.argv[1]
-    img = cv2.imread(img_path, 1) # load a color image
+    img = cv2.imread(img_path, 1) # load a color image in np.array
     hg = get_histogram(img)
     color = ['r', 'g', 'b'] # L = red, a = green, b = blue
     for i, c in enumerate(color):
@@ -33,3 +33,4 @@ if __name__ == '__main__':
         print(c)
         print(hg[i])
     plt.show()
+'''
