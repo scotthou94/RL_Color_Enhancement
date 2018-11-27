@@ -29,40 +29,40 @@ def actionlst():
     action_lst = [_mani_c_inc, _mani_c_dec, _mani_s_inc, _mani_s_dec, _mani_b_inc, _mani_b_dec, _mani_wb_rg_inc, _mani_wb_rg_dec, _mani_wb_gb_inc, _mani_wb_gb_dec, _mani_wb_rb_inc, _mani_wb_rb_dec]
     return action_lst
 
-def _mani_c_inc(img_arr, af):
+def _mani_c_inc(img_arr, af=0.05):
     return mani_c(img_arr, 1+af)
 
-def _mani_c_dec(img_arr, af):
+def _mani_c_dec(img_arr, af=0.05):
     return mani_c(img_arr, 1-af)
 
-def _mani_s_inc(img_arr, af):
+def _mani_s_inc(img_arr, af=0.05):
     return mani_s(img_arr, 1+af)
 
-def _mani_s_dec(img_arr, af):
+def _mani_s_dec(img_arr, af=0.05):
     return mani_s(img_arr, 1-af)
 
-def _mani_b_inc(img_arr, af):
+def _mani_b_inc(img_arr, af=0.05):
     return mani_b(img_arr, 1+af)
 
-def _mani_b_dec(img_arr, af):
+def _mani_b_dec(img_arr, af=0.05):
     return mani_b(img_arr, 1-af)
 
-def _mani_wb_rg_inc(img_arr, af):
+def _mani_wb_rg_inc(img_arr, af=0.05):
     return mani_wb(img_arr, 'rg', 1+af)
 
-def _mani_wb_rg_dec(img_arr, af):
+def _mani_wb_rg_dec(img_arr, af=0.05):
     return mani_wb(img_arr, 'rg', 1-af)
 
-def _mani_wb_gb_inc(img_arr, af):
+def _mani_wb_gb_inc(img_arr, af=0.05):
     return mani_wb(img_arr, 'gb', 1+af)
 
-def _mani_wb_gb_dec(img_arr, af):
+def _mani_wb_gb_dec(img_arr, af=0.05):
     return mani_wb(img_arr, 'gb', 1-af)
 
-def _mani_wb_rb_inc(img_arr, af):
+def _mani_wb_rb_inc(img_arr, af=0.05):
     return mani_wb(img_arr, 'rb', 1+af)
 
-def _mani_wb_rb_dec(img_arr, af):
+def _mani_wb_rb_dec(img_arr, af=0.05):
     return mani_wb(img_arr, 'rb', 1-af)
 
 # f is the increase/decrease factor, f = 1 original image, f > 1 increase, 0 <= f < 1 decrease
@@ -112,14 +112,14 @@ def mani_wb(img_arr, pair, f):   # input image, direction, pair (red and green, 
     new_img = np.dstack((r, g, b))
     return new_img.astype('uint8')
 
-''' # test client
+ # test client
 if __name__ == "__main__":
     img_path = sys.argv[1]
     img = Image.open(img_path)
     img.show()
     img = np.array(img)
     a = actionlst()
-    new_img = a[0](img, 0.5)
+    new_img = a[0](img)
 
     ni = Image.fromarray(new_img, 'RGB')
     ni.show()
@@ -139,4 +139,3 @@ if __name__ == "__main__":
         plt.xlim([0,32])
 
     plt.show()
-'''
