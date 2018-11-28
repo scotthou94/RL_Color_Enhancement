@@ -1,10 +1,13 @@
+import sys
+sys.path.append('../feature_extractor')
+
 import tensorflow as tf
 import numpy as np
 import numpy.linalg as LA
 
 from network import QNetwork
 from action import actionlst
-from ..feature_extractor.feature_extractor import ContextExtractor, get_histogram 
+from feature_extractor import ContextExtractor, get_histogram 
 
 BUFFER_SIZE = int(1e5)  # replay buffer size
 BATCH_SIZE = 64         # minibatch size
