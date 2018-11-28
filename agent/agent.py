@@ -14,15 +14,30 @@ LR = 5e-4               # learning rate
 UPDATE_EVERY = 4        # how often to update the network
 SEED = 6885
 ACTION_SIZE = 12
-STATE_LENGTH = 5000
+VGG_SHAPE = 224
+VGG_OUTPUT = 4096
+COLOR_SHAPE = 96
+CAPACITY = 500
+STATE_LENGTH = VGG_OUTPUT + COLOR_SHAPE
 
-# Calculate reward for consecutive timesteps
-# based on the features of images
+
+# Calculate reward for consecutive timesteps based on the features of images
 def reward(prev, cur, target):
     l2prev = norm(target - prev)
     l2cur = norm(target - cur)
     return l2prev - l2cur
 
+# Combine color and context, return state feature
+def combine(color, context):
+    color = color.flatten()
+    state = np.concatenate((color, context))
+    assert state.shape == (VGG_OUTPUT + COLOR_SHAPE,)
+    return state
+
+# Apply action and return result image
+def applyChange(actions, choice, img):
+    assert 'int' in str(img.dtype)
+    return actions[choice](img)
 
 class Agent:
     def __init__(self):
@@ -32,7 +47,7 @@ class Agent:
         self.network_targ = QNetwork()
         self.optimizer = tf.train.AdamOptimizer(learning_rate=LR)
 
-        self.memory = ReplayBuffer(ACTION_SIZE, BUFFER_SIZE, BATCH_SIZE, SEED)
+        self.buffer = ReplayBuffer()
         self.t_step = 0
 
         self.actions = actionlst()
@@ -43,21 +58,40 @@ class Agent:
         self.network_loc.build(tf.TensorShape([None, STATE_LENGTH,]))
         self.network_targ.build(tf.TensorShape([None, STATE_LENGTH,]))
 
-    def step(self, img, target):
+    def getState(self, img):
+        img_resize = tf.image.resize_images(img, [VGG_SHAPE, VGG_SHAPE]) / 255.0
+        ctx = self.context_extractor(img_resize.numpy())
+        color = get_histogram(img)
+        return combine(color, ctx)
+
+    def step(self, img_prev, target):
         # Given input image and target image as numpy array
         # Return (s,a,s',r) and the img after action
         
-        # Extract features
-        ctx_cur = self.context_extractor(img / 255.0)
-        color_cur = get_histogram(img)
+        # 1. Extract features
+        state_prev = self.getState(img_prev)
 
-        # TODO: 1. feed to local network and get action
-        #       2. apply action to prev img and extract features
-        #       3. calculate reward
+        # 2. Feed to local network and get action
+        # Add batch dimension to state
+        state = np.expand_dims(state, 0)
+        state = state.astype(np.float32)
+        predicts = self.network_loc(state)
+        action = np.argmax(predicts)
 
+        # 3. Apply action and get img_cur, state_cur, state_target
+        img_cur = applyChange(self.actions, action, img_prev)
+        state_cur = self.getState(img_cur)
+        state_target = self.getState(target)
 
-    def record(self):
+        # 4. Calculate reward
+        reward = reward(state_prev, state_cur, state_target)
+
+        # Return (s,a,s',r) tuple
+        return (state_prev, action, state_cur, reward)
+
+    def record(self, state_prev, action, state_cur, reward):
         # Save (s,a,s',r) to replay buffer
+        return self.buffer.add(state_prev, action, state_cur, reward)
 
     def learn(self):
         pass
@@ -66,14 +100,36 @@ class Agent:
         pass
 
 class ReplayBuffer:
-    def __init__(self):
-        pass
+    def __init__(self, buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE):
+        self.memory = []
+        self.buffer_size = buffer_size
+        self.batch_size = batch_size
 
-    def add(self):
-        pass
+    def add(self, state_prev, action, state_cur, reward):
+        if len(self.memory) == self.buffer_size:
+            return False
+        else:
+            experience = [state_prev, action, state_cur, reward]
+            self.memory.append(experience)
+            return True
 
     def sample(self):
-        pass
+        # Sample a batch of experiences from buffer
+        if len(self.memory) < BATCH_SIZE:
+            return False
+        else:
+            return np.random.choice(self.memory, BATCH_SIZE, replace=False)
 
-    def __len__(self):
-        pass
+    def clear(self):
+        self.memory.clear()
+
+
+
+
+
+
+
+
+
+
+
