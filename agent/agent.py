@@ -77,6 +77,7 @@ class Agent:
         state_prev = state_prev.astype(np.float32)
         predicts = self.network_loc(state_prev)
         action = np.argmax(predicts)
+        state_prev = np.squeeze(state_prev, 0)
 
         # 3. Apply action and get img_cur, state_cur, state_target
         img_cur = applyChange(self.actions, action, img_prev)
@@ -118,10 +119,14 @@ class ReplayBuffer:
         if len(self.memory) < BATCH_SIZE:
             return False
         else:
-            return np.random.choice(self.memory, BATCH_SIZE, replace=False)
+            choices = np.random.choice(len(self.memory), BATCH_SIZE, replace=False)
+            return self.memory[choices]
 
     def clear(self):
         self.memory.clear()
+
+    def __len__(self):
+        return len(self.memory)
 
 
 
