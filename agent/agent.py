@@ -73,9 +73,9 @@ class Agent:
 
         # 2. Feed to local network and get action
         # Add batch dimension to state
-        state = np.expand_dims(state, 0)
-        state = state.astype(np.float32)
-        predicts = self.network_loc(state)
+        state_prev = np.expand_dims(state_prev, 0)
+        state_prev = state_prev.astype(np.float32)
+        predicts = self.network_loc(state_prev)
         action = np.argmax(predicts)
 
         # 3. Apply action and get img_cur, state_cur, state_target
