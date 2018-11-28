@@ -120,7 +120,7 @@ class ReplayBuffer:
             return False
         else:
             choices = np.random.choice(len(self.memory), BATCH_SIZE, replace=False)
-            return self.memory[choices]
+            return np.array(self.memory)[choices]
 
     def clear(self):
         self.memory.clear()
