@@ -23,7 +23,7 @@ STATE_LENGTH = VGG_OUTPUT + COLOR_SHAPE
 
 # Calculate reward for consecutive timesteps based on the features of images
 def reward(prev, cur, target):
-    l2prev = LA.orm(target - prev)
+    l2prev = LA.norm(target - prev)
     l2cur = LA.norm(target - cur)
     return l2prev - l2cur
 
