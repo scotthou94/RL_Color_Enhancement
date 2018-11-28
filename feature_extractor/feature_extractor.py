@@ -35,7 +35,7 @@ class ContextExtractor:
 def get_histogram(img):
     assert 'int' in str(img.dtype)
     lab_img = cv2.cvtColor(img, cv2.COLOR_RGB2Lab)  # convert color space from RGB to Lab
-    l_channel, a_channel, b_channel = cv2.split(lab_img). # separate L, a and b channels
+    l_channel, a_channel, b_channel = cv2.split(lab_img)  # separate L, a and b channels
     clahe = cv2.createCLAHE(clipLimit = 2.0, tileGridSize = (8, 8))
     clahe_l_channel = clahe.apply(l_channel). # apply CLAHE to lightness channel
     equalized_img = cv2.merge((clahe_l_channel, a_channel, b_channel))
