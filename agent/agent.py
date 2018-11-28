@@ -84,10 +84,10 @@ class Agent:
         state_target = self.getState(target)
 
         # 4. Calculate reward
-        reward = reward(state_prev, state_cur, state_target)
+        r = reward(state_prev, state_cur, state_target)
 
         # Return (s,a,s',r) tuple
-        return (state_prev, action, state_cur, reward)
+        return (state_prev, action, state_cur, r)
 
     def record(self, state_prev, action, state_cur, reward):
         # Save (s,a,s',r) to replay buffer
