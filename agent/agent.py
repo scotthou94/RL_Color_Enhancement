@@ -1,6 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import numpy.linalg.norm as norm
+import numpy.linalg as LA
 
 from network import QNetwork
 from action import actionlst
@@ -23,8 +23,8 @@ STATE_LENGTH = VGG_OUTPUT + COLOR_SHAPE
 
 # Calculate reward for consecutive timesteps based on the features of images
 def reward(prev, cur, target):
-    l2prev = norm(target - prev)
-    l2cur = norm(target - cur)
+    l2prev = LA.orm(target - prev)
+    l2cur = LA.norm(target - cur)
     return l2prev - l2cur
 
 # Combine color and context, return state feature
