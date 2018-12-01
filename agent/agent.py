@@ -109,16 +109,15 @@ class Agent:
     def learn(self):
         # 1. Sample batch from replay buffer
         # Only sample whole batch
-        batch = self.buffer.sample()
-        if batch.shape[0] == 0:
+        state_ps, actions, state_cs, rs = self.buffer.sample()
+        if state_ps.shape[0] == 0:
             return False
-        assert batch.shape[0] == self.batch_size
         # Unpack experiences
-        rows = np.arange(batch.shape[0])
-        state_ps = batch[rows, 0]
-        actions = batch[rows, 1]
-        state_cs = batch[rows, 2]
-        rs = batch[rows, 3]
+        #rows = np.arange(batch.shape[0])
+        #state_ps = batch[rows, 0]
+        #actions = batch[rows, 1]
+        #state_cs = batch[rows, 2]
+        #rs = batch[rows, 3]
 
         # Debug code
         assert state_ps.shape == (batch.shape[0], STATE_LENGTH)
@@ -153,20 +152,32 @@ class Agent:
 
 class ReplayBuffer:
     def __init__(self, buffer_size, batch_size):
-        self.memory = deque(maxlen=buffer_size)
+        #self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
 
+        self.states = deque(maxlen=buffer_size)
+        self.actions = deque(maxlen=buffer_size)
+        self.states_n = deque(maxlen=buffer_size)
+        self.rewards = deque(maxlen=buffer_size)
+
     def add(self, state_prev, action, state_cur, reward):
-        experience = [state_prev, action, state_cur, reward]
-        self.memory.append(experience)
+        #experience = [state_prev, action, state_cur, reward]
+        #self.memory.append(experience)
+        self.states.append(state_prev)
+        self.actions.append(action)
+        self.states_n.append(state_cur)
+        self.rewards.append(reward)
 
     def sample(self):
         # Sample a batch of experiences from buffer
-        if len(self.memory) < self.batch_size:
-            return np.array([])
+        if len(self.states) < self.batch_size:
+            return np.array([]), np.array([]), np.array([]), np.array([])
         else:
             choices = np.random.choice(len(self.memory), self.batch_size, replace=False)
-            return np.array(self.memory)[choices]
+            return np.array(self.states)[choices],
+                   np.array(self.actions)[choices],
+                   np.array(self.states_n)[choices],
+                   np.array(self.rewards)[choices]
 
     def clear(self):
         self.memory.clear()
