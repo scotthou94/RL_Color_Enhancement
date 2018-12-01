@@ -48,6 +48,8 @@ class Agent:
     def __init__(self, buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE):
         # local network for estimate
         # target network for computing target
+        self.batch_size = batch_size
+
         self.network_loc = QNetwork()
         self.network_targ = QNetwork()
         setWeights(self.network_loc, self.network_targ)
@@ -110,7 +112,7 @@ class Agent:
         batch = self.buffer.sample()
         if batch.shape[0] == 0:
             return False
-        assert batch.shape[0] == BATCH_SIZE
+        assert batch.shape[0] == self.batch_size
         # Unpack experiences
         rows = np.arange(batch.shape[0])
         state_ps = batch[rows, 0]
@@ -150,8 +152,8 @@ class Agent:
             layer_t.set_weights(target)
 
 class ReplayBuffer:
-    def __init__(self, buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE):
-        self.memory = deque(maxlen=BUFFER_SIZE)
+    def __init__(self, buffer_size, batch_size):
+        self.memory = deque(maxlen=buffer_size)
         self.batch_size = batch_size
 
     def add(self, state_prev, action, state_cur, reward):
@@ -163,7 +165,7 @@ class ReplayBuffer:
         if len(self.memory) < self.batch_size:
             return np.array([])
         else:
-            choices = np.random.choice(len(self.memory), BATCH_SIZE, replace=False)
+            choices = np.random.choice(len(self.memory), self.batch_size, replace=False)
             return np.array(self.memory)[choices]
 
     def clear(self):
