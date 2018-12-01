@@ -104,7 +104,7 @@ class Agent:
     def learn(self):
         # 1. Sample batch from replay buffer
         # Only sample whole batch
-        batch = self.buffer.sample():
+        batch = self.buffer.sample()
         if not batch:
             return
         # Unpack experiences
