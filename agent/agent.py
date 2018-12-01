@@ -174,9 +174,9 @@ class ReplayBuffer:
             return np.array([]), np.array([]), np.array([]), np.array([])
         else:
             choices = np.random.choice(len(self.memory), self.batch_size, replace=False)
-            return np.array(self.states)[choices],
-                   np.array(self.actions)[choices],
-                   np.array(self.states_n)[choices],
+            return np.array(self.states)[choices],    \
+                   np.array(self.actions)[choices],   \
+                   np.array(self.states_n)[choices],  \
                    np.array(self.rewards)[choices]
 
     def clear(self):
