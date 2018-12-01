@@ -45,7 +45,7 @@ def setWeights(model1, model2):
         model2.layers[i].set_weights(model1.layers[i].get_weights())
 
 class Agent:
-    def __init__(self):
+    def __init__(self, buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE):
         # local network for estimate
         # target network for computing target
         self.network_loc = QNetwork()
@@ -53,7 +53,7 @@ class Agent:
         setWeights(self.network_loc, self.network_targ)
         self.optimizer = tf.train.AdamOptimizer(learning_rate=LR)
 
-        self.buffer = ReplayBuffer()
+        self.buffer = ReplayBuffer(buffer_size=buffer_size, batch_size=BATCH_SIZE)
         self.t_step = 0
 
         self.actions = actionlst()
@@ -119,8 +119,6 @@ class Agent:
         rs = batch[rows, 3]
 
         # Debug code
-        if state_ps.shape != (batch.shape[0], STATE_LENGTH):
-            print('state_ps.shape', state_ps.shape)
         assert state_ps.shape == (batch.shape[0], STATE_LENGTH)
         assert actions.shape == (batch.shape[0],)
         assert state_cs.shape == (batch.shape[0], STATE_LENGTH)
