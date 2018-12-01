@@ -108,7 +108,7 @@ class Agent:
         # 1. Sample batch from replay buffer
         # Only sample whole batch
         batch = self.buffer.sample()
-        if not batch:
+        if batch.shape[0] == 0:
             return False
         # Unpack experiences
         rows = np.arange(batch.shape[0])
@@ -160,7 +160,7 @@ class ReplayBuffer:
     def sample(self):
         # Sample a batch of experiences from buffer
         if len(self.memory) < BATCH_SIZE:
-            return False
+            return np.array([])
         else:
             choices = np.random.choice(len(self.memory), BATCH_SIZE, replace=False)
             return np.array(self.memory)[choices]
