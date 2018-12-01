@@ -160,7 +160,7 @@ class ReplayBuffer:
 
     def sample(self):
         # Sample a batch of experiences from buffer
-        if len(self.memory) < BATCH_SIZE:
+        if len(self.memory) < self.batch_size:
             return np.array([])
         else:
             choices = np.random.choice(len(self.memory), BATCH_SIZE, replace=False)
