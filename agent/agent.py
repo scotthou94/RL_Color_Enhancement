@@ -110,6 +110,7 @@ class Agent:
         batch = self.buffer.sample()
         if batch.shape[0] == 0:
             return False
+        assert batch.shape[0] == BATCH_SIZE
         # Unpack experiences
         rows = np.arange(batch.shape[0])
         state_ps = batch[rows, 0]
@@ -118,6 +119,8 @@ class Agent:
         rs = batch[rows, 3]
 
         # Debug code
+        if state_ps.shape != (batch.shape[0], STATE_LENGTH):
+            print('state_ps.shape', state_ps.shape)
         assert state_ps.shape == (batch.shape[0], STATE_LENGTH)
         assert actions.shape == (batch.shape[0],)
         assert state_cs.shape == (batch.shape[0], STATE_LENGTH)
