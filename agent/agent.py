@@ -106,7 +106,7 @@ class Agent:
         # Only sample whole batch
         batch = self.buffer.sample()
         if not batch:
-            return
+            return False
         # Unpack experiences
         rows = np.arange(batch.shape[0])
         state_ps = batch[rows, 0]
@@ -127,6 +127,7 @@ class Agent:
 
         # 4. Soft updates
         self.__soft_update()
+        return True
 
     def __soft_update(self):
         # Slowly update the target network
@@ -135,7 +136,7 @@ class Agent:
             target = layer_t.get_weights()
             loc = layer_loc.get_weights()
             for i in range(len(target)):
-                target[i] = TAU * target[i] + (1 - TAU) * loc[i]
+                target[i] = (1 - TAU) * target[i] + TAU * loc[i]
             layer_t.set_weights(target)
 
 class ReplayBuffer:
