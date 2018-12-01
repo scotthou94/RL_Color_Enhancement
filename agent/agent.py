@@ -114,6 +114,12 @@ class Agent:
         state_cs = batch[rows, 2]
         rs = batch[rows, 3]
 
+        # Debug code
+        assert state_ps.shape == (batch.shape[0], STATE_LENGTH)
+        assert actions.shape == (batch.shape[0],)
+        assert state_cs.shape == (batch.shape[0], STATE_LENGTH)
+        assert rs.shape == (batch.shape[0],)
+
         # 2. Compute loss based on q_target and q_estimate
         with tf.GradientTape() as tape:
             q_est = self.network_loc(state_ps)[rows, actions]
