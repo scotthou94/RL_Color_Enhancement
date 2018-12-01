@@ -53,7 +53,7 @@ class Agent:
         setWeights(self.network_loc, self.network_targ)
         self.optimizer = tf.train.AdamOptimizer(learning_rate=LR)
 
-        self.buffer = ReplayBuffer(buffer_size=buffer_size, batch_size=BATCH_SIZE)
+        self.buffer = ReplayBuffer(buffer_size=buffer_size, batch_size=batch_size)
         self.t_step = 0
 
         self.actions = actionlst()
