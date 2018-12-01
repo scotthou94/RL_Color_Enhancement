@@ -71,6 +71,9 @@ class Agent:
         color = get_histogram(img)
         return combine(color, ctx)
 
+    def clearBuffer(self):
+        self.buffer.clear()
+
     def step(self, img_prev, target):
         # Given input image and target image as numpy array
         # Return (s,a,s',r) and the img after action
@@ -161,6 +164,9 @@ class ReplayBuffer:
         else:
             choices = np.random.choice(len(self.memory), BATCH_SIZE, replace=False)
             return np.array(self.memory)[choices]
+
+    def clear(self):
+        self.memory.clear()
 
     def __len__(self):
         return len(self.memory)
