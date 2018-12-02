@@ -120,10 +120,10 @@ class Agent:
         #rs = batch[rows, 3]
 
         # Debug code
-        assert state_ps.shape == (batch.shape[0], STATE_LENGTH)
-        assert actions.shape == (batch.shape[0],)
-        assert state_cs.shape == (batch.shape[0], STATE_LENGTH)
-        assert rs.shape == (batch.shape[0],)
+        assert state_ps.shape == (state_ps.shape[0], STATE_LENGTH)
+        assert actions.shape == (actions.shape[0],)
+        assert state_cs.shape == (state_cs.shape[0], STATE_LENGTH)
+        assert rs.shape == (rs.shape[0],)
 
         # 2. Compute loss based on q_target and q_estimate
         with tf.GradientTape() as tape:
