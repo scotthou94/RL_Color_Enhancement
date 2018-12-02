@@ -113,7 +113,7 @@ class Agent:
         if state_ps.shape[0] == 0:
             return False
         # Unpack experiences
-        #rows = np.arange(batch.shape[0])
+        rows = np.arange(state_ps.shape[0])
         #state_ps = batch[rows, 0]
         #actions = batch[rows, 1]
         #state_cs = batch[rows, 2]
