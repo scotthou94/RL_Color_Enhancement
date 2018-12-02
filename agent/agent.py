@@ -80,8 +80,8 @@ class Agent:
         self.state_target = self.__getState(target)
 
 
-    def step(self, img_prev, target):
-        # Given input image and target image as numpy array
+    def step(self, img_prev):
+        # Given input image as numpy array
         # Return (s,a,s',r) and the img after action
         
         # 1. Extract features
