@@ -127,8 +127,8 @@ class Agent:
 
         # 2. Compute loss based on q_target and q_estimate
         with tf.GradientTape() as tape:
-            q_est = self.network_loc(state_ps)[rows, actions]
-            q_targ = self.network_targ(state_cs).max(axis=1)
+            q_est = self.network_loc(state_ps).numpy()[rows, actions]
+            q_targ = self.network_targ(state_cs).numpy().max(axis=1)
             target = rs + GAMMA * q_targ
             loss = tf.losses.mean_squared_error(target, q_est)
 
