@@ -56,11 +56,9 @@ class Agent:
         self.optimizer = tf.train.AdamOptimizer(learning_rate=LR)
 
         self.buffer = ReplayBuffer(buffer_size=buffer_size, batch_size=batch_size)
-        self.t_step = 0
-
         self.actions = actionlst()
-
         self.context_extractor = ContextExtractor()
+        self.state_target = None
 
         # Build model so it knows the input shape
         self.network_loc.build(tf.TensorShape([None, STATE_LENGTH,]))
@@ -75,6 +73,12 @@ class Agent:
 
     def clearBuffer(self):
         self.buffer.clear()
+
+    def setTarget(self, target):
+        # This should be called at the beginning of
+        # each (src, target) pair training
+        self.state_target = self.__getState(target)
+
 
     def step(self, img_prev, target):
         # Given input image and target image as numpy array
@@ -91,13 +95,14 @@ class Agent:
         action = np.argmax(predicts)
         state_prev = np.squeeze(state_prev, 0)
 
-        # 3. Apply action and get img_cur, state_cur, state_target
+        # 3. Apply action and get img_cur, state_cur
         img_cur = applyChange(self.actions, action, img_prev)
         state_cur = self.__getState(img_cur)
-        state_target = self.__getState(target)
+        # Only float32 can be feed to network
+        state_cur = state_cur.astype(np.float32)
 
         # 4. Calculate reward
-        r = reward(state_prev, state_cur, state_target)
+        r = reward(state_prev, state_cur, self.state_target)
 
         # Return (s,a,s',r) tuple and img_cur
         return (state_prev, action, state_cur, r), img_cur
