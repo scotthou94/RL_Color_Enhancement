@@ -131,9 +131,12 @@ class Agent:
         assert rs.shape == (rs.shape[0],)
 
         # 2. Compute loss based on q_target and q_estimate
+        index = []
+        for idx, a in enumerate(actions):
+            index.append([idx, a])
         with tf.GradientTape() as tape:
-            q_est = self.network_loc(state_ps).numpy()[rows, actions]
-            q_targ = self.network_targ(state_cs).numpy().max(axis=1)
+            q_est = tf.gather_nd(self.network_loc(state_ps), index)
+            q_targ = tf.reduce_max(self.network_targ(state_cs), axis=1)
             target = rs + GAMMA * q_targ
             loss = tf.losses.mean_squared_error(target, q_est)
 
