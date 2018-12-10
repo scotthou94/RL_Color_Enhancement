@@ -151,7 +151,8 @@ class Agent:
     def __soft_update(self):
         # Slowly update the target network
         # Iterate through all layers and set weights
-        for layer_t, layer_loc in zip(self.network_targ, self.network_loc):
+        for layer_t, layer_loc in \
+          zip(self.network_targ.layers, self.network_loc.layers):
             target = layer_t.get_weights()
             loc = layer_loc.get_weights()
             for i in range(len(target)):
