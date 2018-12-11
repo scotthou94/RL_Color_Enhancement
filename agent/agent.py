@@ -100,7 +100,7 @@ class Agent:
         
         # 1. Extract features
         state_prev = self.__getState(img_prev)
-        state_prev.astype(np.float32)
+        state_prev = state_prev.astype(np.float32)
 
         # 2. Feed to local network and get action
         action = self.__getAction(state_prev)
