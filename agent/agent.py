@@ -93,7 +93,7 @@ class Agent:
         state_cur = self.__getState(img)
         action = self.__getAction(state_cur)
         img_nxt = applyChange(self.actions, action, img)
-        return img_nxt
+        return img_nxt, state_cur
 
     def step(self, img_prev):
         # Given input image as numpy array
