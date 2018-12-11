@@ -8,11 +8,11 @@ from network import QNetwork
 from action import actionlst
 from feature_extractor.feature_extractor import ContextExtractor, get_histogram 
 
-BUFFER_SIZE = int(1e3)  # replay buffer size
-BATCH_SIZE = 64         # minibatch size
+BUFFER_SIZE = int(1e3)  # default replay buffer size
+BATCH_SIZE = 64         # default minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
-LR = 5e-4               # learning rate 
+LR = 5e-4               # default learning rate 
 VGG_SHAPE = 224
 VGG_OUTPUT = 4096
 COLOR_SHAPE = 96
@@ -45,7 +45,7 @@ def setWeights(model1, model2):
         model2.layers[i].set_weights(model1.layers[i].get_weights())
 
 class Agent:
-    def __init__(self, buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE):
+    def __init__(self, buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE, lr=LR):
         # local network for estimate
         # target network for computing target
         self.batch_size = batch_size
@@ -53,7 +53,7 @@ class Agent:
         self.network_loc = QNetwork()
         self.network_targ = QNetwork()
         setWeights(self.network_loc, self.network_targ)
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=LR)
+        self.optimizer = tf.train.AdamOptimizer(learning_rate=lr)
 
         self.buffer = ReplayBuffer(buffer_size=buffer_size, batch_size=batch_size)
         self.actions = actionlst()
@@ -71,6 +71,15 @@ class Agent:
         color = get_histogram(img)
         return combine(color, ctx)
 
+    def __getAction(self, state):
+        # Add batch dimension
+        state = np.expand_dims(state, 0)
+        state = state.astype(np.float32)
+        predicts = self.network_loc(state)
+        action = np.argmax(predicts)
+        state = np.squeeze(state, 0)
+        return action
+
     def clearBuffer(self):
         self.buffer.clear()
 
@@ -79,6 +88,12 @@ class Agent:
         # each (src, target) pair training
         self.state_target = self.__getState(target)
 
+    def predict(self, img):
+        # Given an image, return the updated image
+        state_cur = self.__getState(img)
+        action = self.__getAction(state_cur)
+        img_nxt = applyChange(self.actions, action, img)
+        return img_nxt
 
     def step(self, img_prev):
         # Given input image as numpy array
@@ -88,12 +103,7 @@ class Agent:
         state_prev = self.__getState(img_prev)
 
         # 2. Feed to local network and get action
-        # Add batch dimension to state
-        state_prev = np.expand_dims(state_prev, 0)
-        state_prev = state_prev.astype(np.float32)
-        predicts = self.network_loc(state_prev)
-        action = np.argmax(predicts)
-        state_prev = np.squeeze(state_prev, 0)
+        action = self.__getAction(state_prev)
 
         # 3. Apply action and get img_cur, state_cur
         img_cur = applyChange(self.actions, action, img_prev)
