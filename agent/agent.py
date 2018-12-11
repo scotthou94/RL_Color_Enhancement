@@ -74,7 +74,6 @@ class Agent:
     def __getAction(self, state):
         # Add batch dimension
         state = np.expand_dims(state, 0)
-        state = state.astype(np.float32)
         predicts = self.network_loc(state)
         action = np.argmax(predicts)
         state = np.squeeze(state, 0)
@@ -101,6 +100,7 @@ class Agent:
         
         # 1. Extract features
         state_prev = self.__getState(img_prev)
+        state_prev.astype(np.float32)
 
         # 2. Feed to local network and get action
         action = self.__getAction(state_prev)
