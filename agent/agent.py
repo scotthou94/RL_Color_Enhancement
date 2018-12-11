@@ -90,6 +90,7 @@ class Agent:
     def predict(self, img):
         # Given an image, return the updated image
         state_cur = self.__getState(img)
+        state_cur = state_cur.astype(np.float32)
         action = self.__getAction(state_cur)
         img_nxt = applyChange(self.actions, action, img)
         return img_nxt, state_cur
