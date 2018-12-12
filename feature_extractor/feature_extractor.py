@@ -24,16 +24,19 @@ class ContextExtractor:
         data = np.array([data])
         return self.model.predict(data)[0]
 
+# Input should be int
+# Return shape (3,32,1)
 def get_histogram(img):
+    assert 'int' in str(img.dtype)
     lab_img = cv2.cvtColor(img, cv2.COLOR_RGB2Lab)  # convert color space from RGB to Lab
-    l_channel, a_channel, b_channel = cv2.split(lab_img)    # separate L, a and b channels
+    l_channel, a_channel, b_channel = cv2.split(lab_img)  # separate L, a and b channels
     clahe = cv2.createCLAHE(clipLimit = 2.0, tileGridSize = (8, 8))
-    clahe_l_channel = clahe.apply(l_channel)    # apply CLAHE to lightness channel
+    clahe_l_channel = clahe.apply(l_channel) # apply CLAHE to lightness channel
     equalized_img = cv2.merge((clahe_l_channel, a_channel, b_channel))
     histogram = []   # L, a, b in bins for histogram
     for i in range(3):
         histogram.append(cv2.calcHist([equalized_img], [i], None, [32], [0,256]))   # 32 bins
-    return _normalize(histogram)
+    return np.array(_normalize(histogram))
 
 # use formula: normalized_x = (x - min) / (max - min)
 def _normalize(histogram):
