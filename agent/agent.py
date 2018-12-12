@@ -128,12 +128,6 @@ class Agent:
         state_ps, actions, state_cs, rs = self.buffer.sample()
         if state_ps.shape[0] == 0:
             return False
-        # Unpack experiences
-        rows = np.arange(state_ps.shape[0])
-        #state_ps = batch[rows, 0]
-        #actions = batch[rows, 1]
-        #state_cs = batch[rows, 2]
-        #rs = batch[rows, 3]
 
         # Debug code
         assert state_ps.shape == (state_ps.shape[0], STATE_LENGTH)
@@ -181,8 +175,6 @@ class ReplayBuffer:
         self.rewards = deque(maxlen=buffer_size)
 
     def add(self, state_prev, action, state_cur, reward):
-        #experience = [state_prev, action, state_cur, reward]
-        #self.memory.append(experience)
         self.states.append(state_prev)
         self.actions.append(action)
         self.states_n.append(state_cur)

@@ -18,6 +18,8 @@ if sys.platform == 'darwin':
     matplotlib.use("TkAgg")
 from matplotlib import pyplot as plt
 
+FACTOR = 0.1
+
 # af is the positive actual factor, e.g. af = 0.05, then action will increase by 1 + af = 1.05 and decrease by 1 - af = 0.95
 # actionlst[0]: increase contrast, actionlst[1]: decrease contrast
 # actionlst[2]: increase saturation, actionlst[3]: decrease saturation
@@ -29,40 +31,40 @@ def actionlst():
     action_lst = [_mani_c_inc, _mani_c_dec, _mani_s_inc, _mani_s_dec, _mani_b_inc, _mani_b_dec, _mani_wb_rg_inc, _mani_wb_rg_dec, _mani_wb_gb_inc, _mani_wb_gb_dec, _mani_wb_rb_inc, _mani_wb_rb_dec]
     return action_lst
 
-def _mani_c_inc(img_arr, af=0.05):
+def _mani_c_inc(img_arr, af=FACTOR):
     return mani_c(img_arr, 1+af)
 
-def _mani_c_dec(img_arr, af=0.05):
+def _mani_c_dec(img_arr, af=FACTOR):
     return mani_c(img_arr, 1-af)
 
-def _mani_s_inc(img_arr, af=0.05):
+def _mani_s_inc(img_arr, af=FACTOR):
     return mani_s(img_arr, 1+af)
 
-def _mani_s_dec(img_arr, af=0.05):
+def _mani_s_dec(img_arr, af=FACTOR):
     return mani_s(img_arr, 1-af)
 
-def _mani_b_inc(img_arr, af=0.05):
+def _mani_b_inc(img_arr, af=FACTOR):
     return mani_b(img_arr, 1+af)
 
-def _mani_b_dec(img_arr, af=0.05):
+def _mani_b_dec(img_arr, af=FACTOR):
     return mani_b(img_arr, 1-af)
 
-def _mani_wb_rg_inc(img_arr, af=0.05):
+def _mani_wb_rg_inc(img_arr, af=FACTOR):
     return mani_wb(img_arr, 'rg', 1+af)
 
-def _mani_wb_rg_dec(img_arr, af=0.05):
+def _mani_wb_rg_dec(img_arr, af=FACTOR):
     return mani_wb(img_arr, 'rg', 1-af)
 
-def _mani_wb_gb_inc(img_arr, af=0.05):
+def _mani_wb_gb_inc(img_arr, af=FACTOR):
     return mani_wb(img_arr, 'gb', 1+af)
 
-def _mani_wb_gb_dec(img_arr, af=0.05):
+def _mani_wb_gb_dec(img_arr, af=FACTOR):
     return mani_wb(img_arr, 'gb', 1-af)
 
-def _mani_wb_rb_inc(img_arr, af=0.05):
+def _mani_wb_rb_inc(img_arr, af=FACTOR):
     return mani_wb(img_arr, 'rb', 1+af)
 
-def _mani_wb_rb_dec(img_arr, af=0.05):
+def _mani_wb_rb_dec(img_arr, af=FACTOR):
     return mani_wb(img_arr, 'rb', 1-af)
 
 # f is the increase/decrease factor, f = 1 original image, f > 1 increase, 0 <= f < 1 decrease
