@@ -83,9 +83,9 @@ class Agent:
         state = np.squeeze(state, 0)
         random = np.random.choice(12, 1)[0]
         if np.random.random_sample() > (1 - epsilon):
-            return action
-        else:
             return random
+        else:
+            return action
 
     def clearBuffer(self):
         self.buffer.clear()
