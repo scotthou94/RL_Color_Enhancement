@@ -12,7 +12,8 @@ BUFFER_SIZE = int(1e3)  # default replay buffer size
 BATCH_SIZE = 64         # default minibatch size
 GAMMA = 0.99            # discount factor
 TAU = 1e-3              # for soft update of target parameters
-LR = 5e-4               # default learning rate 
+LR = 5e-4               # default learning rate
+EPSILON = 0.1           # default epsilon
 VGG_SHAPE = 224
 VGG_OUTPUT = 4096
 COLOR_SHAPE = 96
@@ -45,10 +46,12 @@ def setWeights(model1, model2):
         model2.layers[i].set_weights(model1.layers[i].get_weights())
 
 class Agent:
-    def __init__(self, buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE, lr=LR):
+    def __init__(self, buffer_size=BUFFER_SIZE, batch_size=BATCH_SIZE, lr=LR,
+                 epsilon=EPSILON):
         # local network for estimate
         # target network for computing target
         self.batch_size = batch_size
+        self.epsilon = epsilon
 
         self.network_loc = QNetwork()
         self.network_targ = QNetwork()
@@ -71,13 +74,18 @@ class Agent:
         color = get_histogram(img)
         return combine(color, ctx)
 
-    def __getAction(self, state):
+    def __getAction(self, state, epsilon):
+        # Epsilon greedy policy
         # Add batch dimension
         state = np.expand_dims(state, 0)
         predicts = self.network_loc(state)
         action = np.argmax(predicts)
         state = np.squeeze(state, 0)
-        return action
+        random = np.random.choice(12, 1)[0]
+        if np.random.random_sample() > (1 - epsilon):
+            return action
+        else:
+            return random
 
     def clearBuffer(self):
         self.buffer.clear()
@@ -91,7 +99,7 @@ class Agent:
         # Given an image, return the updated image
         state_cur = self.__getState(img)
         state_cur = state_cur.astype(np.float32)
-        action = self.__getAction(state_cur)
+        action = self.__getAction(state_cur, 0)
         img_nxt = applyChange(self.actions, action, img)
         return img_nxt, state_cur
 
@@ -104,7 +112,7 @@ class Agent:
         state_prev = state_prev.astype(np.float32)
 
         # 2. Feed to local network and get action
-        action = self.__getAction(state_prev)
+        action = self.__getAction(state_prev, self.epsilon)
 
         # 3. Apply action and get img_cur, state_cur
         img_cur = applyChange(self.actions, action, img_prev)
