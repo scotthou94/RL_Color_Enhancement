@@ -5,6 +5,10 @@ This is the project of ELEN 6885 Reinforcement Learning course at Columbia Unive
 
 Project members: Shijun Hou, Zihan Bu, Boyu Yang, Yuhao Cao.
 
+### Color_Enhancemene.ipynb
+This is an end-to-end notebook that can run directly on Google Colab. GPU acceleration is recommended and available on Colab.
+It demonstrates the whole process of downloading the dataset, training loop and evaluation.
+
 ### Package dependencies
 ```
 numpy, matplotlib, tensorflow, cv2, Pillow
